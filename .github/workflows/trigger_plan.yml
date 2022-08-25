@@ -1,0 +1,24 @@
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  develop_plan:
+    name: PR Plan - Develop
+    uses: ./.github/workflows/plan.yml
+    if: github.base_ref == 'develop'
+    with:
+      environment: develop
+      issue_number: ${{ github.event.pull_request.number }}
+    secrets: inherit
+
+  main_plan:
+    name: PR Plan - Main
+    uses: ./.github/workflows/plan.yml
+    if: github.base_ref == 'main'
+    with:
+      environment: main
+      issue_number: ${{ github.event.pull_request.number }}
+    secrets: inherit
