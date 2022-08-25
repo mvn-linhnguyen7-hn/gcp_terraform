@@ -31,6 +31,7 @@ on:
 name: _Terraform Apply
 env:
   REGION: us-central1
+  GCP_ENV: ${{ secrets.GCP_ENV }}
   GCP_CREDENTIALS: ${{ secrets.GCP_TERRAFORM_KEY }}
   GCP_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
 
@@ -79,6 +80,12 @@ jobs:
         run: |-
           gsutil mb -p ${{ env.GCP_PROJECT }} -b off -l ${{ env.REGION }} gs://${{ env.GCP_PROJECT }}-tfstate-files/ || true
           gsutil versioning set on gs://${{ env.GCP_PROJECT }}-tfstate-files/
+
+      - name: Render TFVARS
+        uses: nowactions/envsubst@v1
+        with:
+          input: ./config/${{ env.GCP_ENV }}.tfvars
+          output: ./terraform.tfvars
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
