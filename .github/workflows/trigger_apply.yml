@@ -74,4 +74,3 @@ jobs:
       custom_command: ${{ github.event.inputs.custom_command }}
       destroy: ${{ github.event.inputs.destroy }}
     secrets: inherit
-
