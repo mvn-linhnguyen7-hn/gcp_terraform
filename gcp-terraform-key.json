@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "gcp-terraform-360408",
+  "private_key_id": "599adeec07fc98233c86d368876e4131b116c473",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC6sgmZgYEl2UEh\nI66mu2ldZTt+AdUiyipmGv0PeWL1jUemKgxXEk5K0fbdymLWA3U9ztoK0C7pX/h0\nx6Ah4RvOYyicclCy8oadgMsaNRLPlIBOa7NTOEnI6n0BFh9n/rzst7hgNTH+wydT\nM/zScsLlQNY2RETl+Ls05LxJ9PjFgmEiSHanOLX9+5SstDAxDF4cFVLL7duBPgG4\n9Aib4eT5qChiqC2MKU6+VpSfLIVcI06hSOweH965sKuEUaGmi3eEqi1DqVYTEkA9\nVPNspl2rmPL46wNCbiHznWj90Lly05Xb8ozhUt8c13fFv1aEkyTFvN5gbRylIjbt\nfVNIe9AzAgMBAAECggEAB73oSKr7zbOo+r8oYpZKSUAwa7Tsagk+IYZ5pfxKTpUc\nOoIV3up4aqvdnoGNAFjxB1jI5pfkH3NbseQGpOuueSwte/IAR1tn76dumgNHaL+S\nDoPIJ5RMTajuTsQ5wIM/bFrgqhn/8mjp/Dj0q/lsUZC9u/mwGGVBxhtndMhUJJna\n8luOOxLDVsqiVVDIA0ctMysNYb7YDSG0e62qrqTR2rmDlOvQFgT1Ii4lekPv4Dai\n38Wj5ej59T7nnrGr84gtqt5I+3KtF4aQlJSNJzhSIgZYhsvN38bMx0TbPC0ugu/h\naQjH73H5VQT/eBlXkwz6gxrpQs4ksaL6dfHhOkZQyQKBgQDwOO2RJ42BZN1D0Cg9\nK3r3wqUCczri0vbX453B08H9z+8jFFC5Rva2RbvEDjQ8xYWKlFqIXfXcZLDmud0k\nZJ44XrAf6A37d4bqw7hbYCJqArxHW8XyJmOo1BnOppZoIghiPhwp3LoK17YbXNzB\nzlzTq11mABv+fPm4nNrgQKJ4NwKBgQDG9R0sJq7nNX2J60ssMdLKk1DMvSf8Kx0n\n4cHRMVwclcPbKIfnJTqWivJzlcQtsjshvVED3hmBYoOImrtUGuKNVCNzZmCuJIKA\nKiiZE0DJVPrzSRavfyMRx+majrPtA7PWzsVvFeAQbpv+I6rAgimcG8cFy3oEBZY5\ntt7giZpx5QKBgQCvpQBXpTL7THPYtKfnahZkeEbMztJcrWJdoolkAuCSI+q3nJAV\nmMSlq8FJ7hTV5prpI+Y6VXGCr4EFgxsmFAf4MYvYGIW4u8HDgE4ZSeZ/2vYtuvW2\nQ8mU1Vj1V6scAt5cbwuKtGC3stftk+26K5iGEIOfJC9T2a+CA/aqB7iD6wKBgBfH\niiIRyYvW59dJKSXyGoidzOV7okDQgl6W7Axtwt2jxNH36S5mU7dUih/ogZcYm1qv\n/vPgYtoFBUWZgNRPlk5gBRCw5tNJh9N7tnh9RZwKrSfQz4ZQQsfIRhJ0BetJKwB8\nnDpnue0c20YnyyvRItoGs+XsaPv8EvV49vCNYclFAoGBAOnviahFO/MpdaA08ZPN\nN/MGB7Nu6rQjylNYcXw1Qu6dhCUN///7/UtR82EPuqEAN1vFwwHJNXWAP4OCpTNo\nlExtpNXcgVmqxqqWXdAlk9s9EL52Dka247PeZEOgrJYQWcBf7E4bdmsC6TPfpKfD\nlxXJwypzBr9IMm5S/VUpodwP\n-----END PRIVATE KEY-----\n",
+  "client_email": "gcp-terraform-360408@appspot.gserviceaccount.com",
+  "client_id": "110034767398364142263",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gcp-terraform-360408%40appspot.gserviceaccount.com"
+}
