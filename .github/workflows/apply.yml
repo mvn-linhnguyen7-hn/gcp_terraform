@@ -31,6 +31,7 @@ on:
 name: _Terraform Apply
 env:
   REGION: us-central1
+  GCP_ENV: ${{ secrets.GCP_ENV }}
   GCP_CREDENTIALS: ${{ secrets.GCP_TERRAFORM_KEY }}
   GCP_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
 
@@ -80,6 +81,12 @@ jobs:
           gsutil mb -p ${{ env.GCP_PROJECT }} -b off -l ${{ env.REGION }} gs://${{ env.GCP_PROJECT }}-tfstate-files/ || true
           gsutil versioning set on gs://${{ env.GCP_PROJECT }}-tfstate-files/
 
+      - name: Render TFVARS
+        uses: nowactions/envsubst@v1
+        with:
+          input: ./config/${{ env.GCP_ENV }}.tfvars
+          output: ./terraform.tfvars
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -93,7 +100,7 @@ jobs:
         if: inputs.import != null
         env:
           TF_RESOURCE: ${{ inputs.import }}
-        run: terraform import ${{ env.TF_RESOURCE }}
+        run: terraform import --var-file=./terraform.tfvars ${{ env.TF_RESOURCE }}
 
       - name: Terraform State Remove
         if: inputs.state_rm != null
@@ -108,9 +115,9 @@ jobs:
           TF_RESOURCE: ${{ inputs.destroy }}
         run: |
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
-            terraform apply -destroy --target ${{ env.TF_RESOURCE }} -auto-approve
+            terraform apply -destroy --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }} -auto-approve
           else
-            terraform plan -destroy --target ${{ env.TF_RESOURCE }}
+            terraform plan -destroy --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }}
           fi
 
       - name: Terraform Apply Target
@@ -120,9 +127,9 @@ jobs:
           TF_RESOURCE: ${{ inputs.apply_target }}
         run: |
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
-            terraform apply --target ${{ env.TF_RESOURCE }} -auto-approve
+            terraform apply --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }} -auto-approve
           else
-            terraform plan --target ${{ env.TF_RESOURCE }}
+            terraform plan --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }}
           fi
 
       - name: Terraform Custom Command
@@ -132,9 +139,9 @@ jobs:
           TF_COMMAND: ${{ inputs.custom_command }}
         run: |
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
-            terraform ${{ env.TF_COMMAND }} -auto-approve
+            terraform ${{ env.TF_COMMAND }} --var-file=./terraform.tfvars -auto-approve
           else
-            terraform ${{ env.TF_COMMAND }}
+            terraform ${{ env.TF_COMMAND }} --var-file=./terraform.tfvars
           fi
 
       - name: Terraform Apply All
@@ -143,7 +150,7 @@ jobs:
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
         run: |
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
-            terraform apply -auto-approve
+            terraform apply --var-file=./terraform.tfvars -auto-approve
           else
-            terraform plan 
+            terraform plan --var-file=./terraform.tfvars
           fi
