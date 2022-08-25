@@ -59,6 +59,12 @@ jobs:
           gsutil mb -p ${{ env.GCP_PROJECT }} -b off -l ${{ env.REGION }} gs://${{ env.GCP_PROJECT }}-tfstate-files/ || true
           gsutil versioning set on gs://${{ env.GCP_PROJECT }}-tfstate-files/
 
+      - name: Render TFVARS
+        uses: nowactions/envsubst@v1
+        with:
+          input: ./config/${{ env.GCP_ENV }}.tfvars
+          output: ./terraform.tfvars
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -71,7 +77,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -out plan.tfplan
+        run: terraform plan --var-file=./terraform.tfvars -no-color -out plan.tfplan
         continue-on-error: true
 
       - name: Check Plan Output Size
