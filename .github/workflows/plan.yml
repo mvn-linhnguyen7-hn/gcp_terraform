@@ -59,6 +59,21 @@ jobs:
           gsutil mb -p ${{ env.GCP_PROJECT }} -b off -l ${{ env.REGION }} gs://${{ env.GCP_PROJECT }}-tfstate-files/ || true
           gsutil versioning set on gs://${{ env.GCP_PROJECT }}-tfstate-files/
 
+      - name: Render TFVARS
+        uses: nowactions/envsubst@v1
+        with:
+          input: ./config/${{ env.GCP_ENV }}.tfvars
+          output: ./terraform.tfvars
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.15.5
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
+
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'

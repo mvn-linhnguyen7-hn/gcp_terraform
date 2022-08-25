@@ -89,6 +89,15 @@ jobs:
         id: init
         run: terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.15.5
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
+
       - name: Terraform Import
         if: inputs.import != null
         env:
