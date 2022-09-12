@@ -79,7 +79,9 @@ jobs:
           gcloud services list
 
       - name: Remove default.tflock if exist
-        run: gsutil rm gs://${{ env.GCP_PROJECT }}-${{ inputs.folder }}-tfstate-files/default.tflock || true
+        env:
+          TF_FOLDER: ${{ inputs.folder }}
+        run: gsutil rm gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/default.tflock || true
           
       - name: Render TFVARS
         uses: nowactions/envsubst@v1
@@ -95,8 +97,8 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
-        cd ${{ inputs.folder }}
-        terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ inputs.folder }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
+        cd ${{ env.TF_FOLDER }}
+        terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
 
       - name: Terraform Import
         if: inputs.import != null
@@ -116,7 +118,7 @@ jobs:
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_RESOURCE: ${{ inputs.destroy }}
         run: |
-          cd ${{ inputs.folder }}
+          cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
             terraform apply -destroy --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }} -auto-approve
           else
@@ -129,7 +131,7 @@ jobs:
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_RESOURCE: ${{ inputs.apply_target }}
         run: |
-          cd ${{ inputs.folder }}
+          cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
             terraform apply --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }} -auto-approve
           else
@@ -142,7 +144,7 @@ jobs:
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_COMMAND: ${{ inputs.custom_command }}
         run: |
-          cd ${{ inputs.folder }}
+          cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
             terraform ${{ env.TF_COMMAND }} --var-file=./terraform.tfvars -auto-approve
           else
@@ -154,7 +156,7 @@ jobs:
         env:
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
         run: |
-          cd ${{ inputs.folder }}
+          cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
             terraform apply --var-file=./terraform.tfvars -auto-approve
           else
