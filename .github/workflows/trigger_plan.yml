@@ -1,11 +1,20 @@
+name: trigger_plan
 on:
-  pull_request:
-    branches:
-      - develop
-      - main
-
-name: TERRAFORM PLAN
-
+  # pull_request:
+  #   branches:
+  #     - develop
+  #     - main
+  workflow_dispatch:
+    inputs:
+      folder:
+        type: choice
+        description: "Select the folder:"
+        required: true
+        options:
+          - ig
+          - gke
+          - serverless
+          - gcp_funtions
 jobs:
   develop_plan:
     name: PR Plan - Develop

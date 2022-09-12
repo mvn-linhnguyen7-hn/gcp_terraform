@@ -1,3 +1,4 @@
+name: plan
 on:
   workflow_call:
     inputs:
@@ -42,10 +43,12 @@ jobs:
           gcloud services list
 
       - name: Create Terraform State Bucket, enable Object versioning, Remove default.tflock if exist
+        env:
+          TF_FOLDER: ${{ inputs.folder }}
         run: |-
-          gsutil mb -p ${{ env.GCP_PROJECT }} -b off -l asia-northeast1 gs://${{ env.GCP_PROJECT }}-${{ inputs.folder }}-tfstate-files/ || true
-          gsutil versioning set on gs://${{ env.GCP_PROJECT }}-${{ inputs.folder }}-tfstate-files/
-          gsutil rm gs://${{ env.GCP_PROJECT }}-${{ inputs.folder }}-tfstate-files/default.tflock || true
+          gsutil mb -p ${{ env.GCP_PROJECT }} -b off -l asia-northeast1 gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/ || true
+          gsutil versioning set on gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/
+          gsutil rm gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/default.tflock || true
 
       - name: Render TFVARS
         uses: nowactions/envsubst@v1
@@ -61,14 +64,14 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
-        cd ${{ inputs.folder }}
-        terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ inputs.folder }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
+        cd ${{ env.TF_FOLDER }}
+        terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
 
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
         run: |
-        cd ${{ inputs.folder }}
+        cd ${{ env.TF_FOLDER }}
         terraform plan --var-file=./terraform.tfvars -no-color
         continue-on-error: true
 
