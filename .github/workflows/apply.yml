@@ -1,3 +1,4 @@
+name: apply
 on:
   workflow_call:
     inputs:
