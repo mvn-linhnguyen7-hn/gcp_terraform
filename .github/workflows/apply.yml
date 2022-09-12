@@ -97,6 +97,8 @@ jobs:
 
       - name: Terraform Init
         id: init
+        env:
+          TF_FOLDER: ${{ inputs.folder }}
         run: |
           cd ${{ env.TF_FOLDER }}
           terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
@@ -116,6 +118,7 @@ jobs:
       - name: Terraform Destroy
         if: inputs.destroy != null
         env:
+          TF_FOLDER: ${{ inputs.folder }}
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_RESOURCE: ${{ inputs.destroy }}
         run: |
@@ -129,6 +132,7 @@ jobs:
       - name: Terraform Apply Target
         if: inputs.apply_target != null
         env:
+          TF_FOLDER: ${{ inputs.folder }}
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_RESOURCE: ${{ inputs.apply_target }}
         run: |
@@ -142,6 +146,7 @@ jobs:
       - name: Terraform Custom Command
         if: inputs.custom_command != null
         env:
+          TF_FOLDER: ${{ inputs.folder }}
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_COMMAND: ${{ inputs.custom_command }}
         run: |
@@ -155,6 +160,7 @@ jobs:
       - name: Terraform Apply All
         if: ${{ inputs.apply == 'true' }}
         env:
+          TF_FOLDER: ${{ inputs.folder }}
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
         run: |
           cd ${{ env.TF_FOLDER }}

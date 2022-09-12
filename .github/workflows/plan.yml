@@ -43,6 +43,8 @@ jobs:
           gcloud services list
 
       - name: Create Terraform State Bucket, enable Object versioning, Remove default.tflock if exist
+        env:
+          TF_FOLDER: ${{ inputs.folder }}
         run: |-
           gsutil mb -p ${{ env.GCP_PROJECT }} -b off -l asia-northeast1 gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/ || true
           gsutil versioning set on gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/
