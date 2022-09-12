@@ -12,7 +12,7 @@ on:
 env:
   GCP_ENV: ${{ secrets.GCP_ENV }}
   GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-  GCP_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+  GCP_CREDENTIALS: ${{ secrets.GCP_TERRAFORM_KEY }}
 
 jobs:
   plan:
@@ -35,24 +35,33 @@ jobs:
 
       - name: Enable APIs
         run: |-
-          gcloud services enable compute.googleapis.com
+          gcloud services enable iam.googleapis.com
+          gcloud services enable recommender.googleapis.com
           gcloud services enable cloudresourcemanager.googleapis.com
+          gcloud services enable containerregistry.googleapis.com
+          gcloud services enable run.googleapis.com
+          gcloud services enable dns.googleapis.com
+          gcloud services enable compute.googleapis.com
+          gcloud services enable cloudbuild.googleapis.com
+          gcloud services enable cloudfunctions.googleapis.com
+          gcloud services enable cloudscheduler.googleapis.com
+          gcloud services enable pubsub.googleapis.com
+          gcloud services enable appengine.googleapis.com
+          gcloud services enable monitoring.googleapis.com
+          gcloud services enable firestore.googleapis.com
+          gcloud services enable secretmanager.googleapis.com
           echo "--------------------------------------------------------------"
           echo "Enabled API list:"
           echo "--------------------------------------------------------------"
           gcloud services list
 
       - name: Create Terraform State Bucket, enable Object versioning, Remove default.tflock if exist
+        env:
+          TF_FOLDER: ${{ inputs.folder }}
         run: |-
           gsutil mb -p ${{ env.GCP_PROJECT }} -b off -l asia-northeast1 gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/ || true
           gsutil versioning set on gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/
           gsutil rm gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/default.tflock || true
-
-      - name: Render TFVARS
-        uses: nowactions/envsubst@v1
-        with:
-          input: ./config/${{ env.GCP_ENV }}.tfvars
-          output: ./terraform.tfvars
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -69,12 +78,11 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        if: github.event_name == 'pull_request'
         env:
           TF_FOLDER: ${{ inputs.folder }}
         run: |
           cd ${{ env.TF_FOLDER }}
-          terraform plan --var-file=./terraform.tfvars -no-color
+          terraform plan -no-color
         continue-on-error: true
 
       - name: Check Plan Output Size

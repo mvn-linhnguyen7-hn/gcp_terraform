@@ -3,7 +3,7 @@ resource "google_compute_instance_group_manager" "appserver" {
   name = "appserver-igm"
 
   base_instance_name = "app"
-  zone     = "us-central1-c"
+  zone     = "europe-west1-c"
 
   named_port {
     name = "http"

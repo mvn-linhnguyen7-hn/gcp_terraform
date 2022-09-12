@@ -54,28 +54,6 @@ on:
         required: false
 
 jobs:
-  develop_apply:
-    name: PR Apply - Develop
-    uses: ./.github/workflows/apply.yml
-    if: github.event_name == 'push' && github.ref_name == 'develop'
-    with:
-      environment: develop
-      folder: ${{ github.event.inputs.folder }}
-      auto_approve: true
-      apply: true
-    secrets: inherit
-
-  main_apply:
-    name: PR Apply - main
-    uses: ./.github/workflows/apply.yml
-    if: github.event_name == 'push' && github.ref_name == 'main'
-    with:
-      environment: main
-      folder: ${{ github.event.inputs.folder }}
-      auto_approve: true
-      apply: true
-    secrets: inherit
-
   dispatch_apply:
     name: Dispatch Apply
     uses: ./.github/workflows/apply.yml
