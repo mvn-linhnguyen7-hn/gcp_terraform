@@ -94,8 +94,6 @@ jobs:
 
       - name: Terraform Init
         id: init
-        env:
-          
         run: |
         cd ${{ inputs.folder }}
         terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ inputs.folder }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
