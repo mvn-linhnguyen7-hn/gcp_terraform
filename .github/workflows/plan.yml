@@ -71,7 +71,6 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        if: github.event_name == 'pull_request'
         env:
           TF_FOLDER: ${{ inputs.folder }}
         run: |
