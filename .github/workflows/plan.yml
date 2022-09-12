@@ -63,7 +63,7 @@ jobs:
         id: init
         env:
           TF_FOLDER: ${{ inputs.folder }}
-        run: |
+        run: |-
         cd ${{ env.TF_FOLDER }}
         terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
 
