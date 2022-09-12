@@ -1,4 +1,8 @@
 on:
+  # push:
+  #   branches:
+  #     - develop
+  #     - staging
   workflow_dispatch:
     inputs:
       environment:
@@ -7,7 +11,16 @@ on:
         required: true
         options:
           - develop
-          - main
+          - staging
+      folder:
+        type: choice
+        description: "Select the folder:"
+        required: true
+        options:
+          - ig
+          - gke
+          - serverless
+          - gcp_funtions
       auto_approve:
         type: boolean
         description: "Check this to automatically approve changes."
@@ -39,9 +52,11 @@ on:
         description: "Destroy: Sample: aws_s3_bucket.demo_bucket"
         required: false
 
+name: TERRAFORM APPLY
+
 jobs:
   develop_apply:
-    name: PR Apply Develop
+    name: PR Apply - Develop
     uses: ./.github/workflows/apply.yml
     if: github.event_name == 'push' && github.ref_name == 'develop'
     with:
@@ -51,11 +66,11 @@ jobs:
     secrets: inherit
 
   staging_apply:
-    name: PR Apply Staging
+    name: PR Apply - Staging
     uses: ./.github/workflows/apply.yml
-    if: github.event_name == 'push' && github.ref_name == 'main'
+    if: github.event_name == 'push' && github.ref_name == 'staging'
     with:
-      environment: main
+      environment: staging
       auto_approve: true
       apply: true
     secrets: inherit
@@ -66,6 +81,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     with:
       environment: ${{ github.event.inputs.environment }}
+      folder: ${{ github.event.inputs.folder }}
       auto_approve: ${{ github.event.inputs.auto_approve }}
       apply: ${{ github.event.inputs.apply }}
       apply_target: ${{ github.event.inputs.apply_target }}
