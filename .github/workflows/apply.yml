@@ -33,7 +33,7 @@ on:
         required: false
 
 env:
-  REGION: asia-northeast1
+  REGION: europe-west1
   GCP_ENV: ${{ secrets.GCP_ENV }}
   GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
   GCP_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
