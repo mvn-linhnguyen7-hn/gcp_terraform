@@ -33,10 +33,10 @@ on:
         required: false
 
 env:
-  REGION: asia-northeast1
+  REGION: europe-west1
   GCP_ENV: ${{ secrets.GCP_ENV }}
   GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-  GCP_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+  GCP_CREDENTIALS: ${{ secrets.GCP_TERRAFORM_KEY }}
 
 jobs:
   apply:
@@ -83,12 +83,6 @@ jobs:
         env:
           TF_FOLDER: ${{ inputs.folder }}
         run: gsutil rm gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/default.tflock || true
-          
-      - name: Render TFVARS
-        uses: nowactions/envsubst@v1
-        with:
-          input: ./config/${{ env.GCP_ENV }}.tfvars
-          output: ./terraform.tfvars
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -97,6 +91,8 @@ jobs:
 
       - name: Terraform Init
         id: init
+        env:
+          TF_FOLDER: ${{ inputs.folder }}
         run: |
           cd ${{ env.TF_FOLDER }}
           terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
@@ -105,7 +101,7 @@ jobs:
         if: inputs.import != null
         env:
           TF_RESOURCE: ${{ inputs.import }}
-        run: terraform import --var-file=./terraform.tfvars ${{ env.TF_RESOURCE }}
+        run: terraform import ${{ env.TF_RESOURCE }}
 
       - name: Terraform State Remove
         if: inputs.state_rm != null
@@ -116,38 +112,41 @@ jobs:
       - name: Terraform Destroy
         if: inputs.destroy != null
         env:
+          TF_FOLDER: ${{ inputs.folder }}
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_RESOURCE: ${{ inputs.destroy }}
         run: |
           cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
-            terraform apply -destroy --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }} -auto-approve
+            terraform apply -destroy --target ${{ env.TF_RESOURCE }} -auto-approve
           else
-            terraform plan -destroy --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }}
+            terraform plan -destroy --target ${{ env.TF_RESOURCE }}
           fi
 
       - name: Terraform Apply Target
         if: inputs.apply_target != null
         env:
+          TF_FOLDER: ${{ inputs.folder }}
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_RESOURCE: ${{ inputs.apply_target }}
         run: |
           cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
-            terraform apply --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }} -auto-approve
+            terraform apply --target ${{ env.TF_RESOURCE }} -auto-approve
           else
-            terraform plan --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }}
+            terraform plan --target ${{ env.TF_RESOURCE }}
           fi
 
       - name: Terraform Custom Command
         if: inputs.custom_command != null
         env:
+          TF_FOLDER: ${{ inputs.folder }}
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_COMMAND: ${{ inputs.custom_command }}
         run: |
           cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
-            terraform ${{ env.TF_COMMAND }} --var-file=./terraform.tfvars -auto-approve
+            terraform ${{ env.TF_COMMAND }} -auto-approve
           else
             terraform ${{ env.TF_COMMAND }} --var-file=./terraform.tfvars
           fi
@@ -155,11 +154,12 @@ jobs:
       - name: Terraform Apply All
         if: ${{ inputs.apply == 'true' }}
         env:
+          TF_FOLDER: ${{ inputs.folder }}
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
         run: |
           cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
-            terraform apply --var-file=./terraform.tfvars -auto-approve
+            terraform apply -auto-approve
           else
             terraform plan --var-file=./terraform.tfvars
           fi
