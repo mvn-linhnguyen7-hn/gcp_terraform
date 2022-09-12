@@ -2,7 +2,7 @@ on:
   pull_request:
     branches:
       - develop
-      - staging
+      - main
 
 name: TERRAFORM PLAN
 
@@ -18,7 +18,7 @@ jobs:
   staging_plan:
     name: PR Plan - Staging
     uses: ./.github/workflows/plan.yml
-    if: github.base_ref == 'staging'
+    if: github.base_ref == 'main'
     with:
-      environment: staging
+      environment: main
     secrets: inherit

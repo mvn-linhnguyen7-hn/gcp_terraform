@@ -2,7 +2,7 @@ on:
   # push:
   #   branches:
   #     - develop
-  #     - staging
+  #     - main
   workflow_dispatch:
     inputs:
       environment:
@@ -11,7 +11,7 @@ on:
         required: true
         options:
           - develop
-          - staging
+          - main
       folder:
         type: choice
         description: "Select the folder:"
@@ -65,12 +65,12 @@ jobs:
       apply: true
     secrets: inherit
 
-  staging_apply:
-    name: PR Apply - Staging
+  main_apply:
+    name: PR Apply - main
     uses: ./.github/workflows/apply.yml
-    if: github.event_name == 'push' && github.ref_name == 'staging'
+    if: github.event_name == 'push' && github.ref_name == 'main'
     with:
-      environment: staging
+      environment: main
       auto_approve: true
       apply: true
     secrets: inherit
