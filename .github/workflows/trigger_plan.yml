@@ -7,14 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       folder:
-        type: choice
-        description: "Select the folder:"
+        type: string
+        description: "ig, gke, serverless, gcp_funtions"
         required: true
-        options:
-          - ig
-          - gke
-          - serverless
-          - gcp_funtions
 jobs:
   develop_plan:
     name: PR Plan - Develop
