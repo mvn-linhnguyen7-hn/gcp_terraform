@@ -63,9 +63,9 @@ jobs:
         id: init
         env:
           TF_FOLDER: ${{ inputs.folder }}
-        run: |-
-        cd ${{ env.TF_FOLDER }}
-        terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
+        run: |
+          cd ${{ env.TF_FOLDER }}
+          terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
 
       - name: Terraform Plan
         id: plan
@@ -73,8 +73,8 @@ jobs:
         env:
           TF_FOLDER: ${{ inputs.folder }}
         run: |
-        cd ${{ env.TF_FOLDER }}
-        terraform plan --var-file=./terraform.tfvars -no-color
+          cd ${{ env.TF_FOLDER }}
+          terraform plan --var-file=./terraform.tfvars -no-color
         continue-on-error: true
 
       - name: Check Plan Output Size

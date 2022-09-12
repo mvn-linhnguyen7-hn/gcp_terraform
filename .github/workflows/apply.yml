@@ -98,8 +98,8 @@ jobs:
       - name: Terraform Init
         id: init
         run: |
-        cd ${{ env.TF_FOLDER }}
-        terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
+          cd ${{ env.TF_FOLDER }}
+          terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
 
       - name: Terraform Import
         if: inputs.import != null
