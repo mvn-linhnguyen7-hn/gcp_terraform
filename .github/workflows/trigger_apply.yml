@@ -53,8 +53,6 @@ on:
         description: "Destroy: Sample: aws_s3_bucket.demo_bucket"
         required: false
 
-name: TERRAFORM APPLY
-
 jobs:
   develop_apply:
     name: PR Apply - Develop
