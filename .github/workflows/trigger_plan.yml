@@ -6,6 +6,13 @@ on:
   #     - main
   workflow_dispatch:
     inputs:
+      environment:
+        type: choice
+        description: "Select the environment to deploy to:"
+        required: true
+        options:
+          - develop
+          - main
       folder:
         type: choice
         description: "Select the folder:"
@@ -16,20 +23,11 @@ on:
           - serverless
           - gcp_funtions
 jobs:
-  develop_plan:
-    name: PR Plan - Develop
+  dispatch_plan:
+    name: Dispatch Plan
     uses: ./.github/workflows/plan.yml
-    if: github.base_ref == 'develop'
+    if: github.event_name == 'workflow_dispatch'
     with:
-      environment: develop
-      folder: ${{ github.event.inputs.folder }}
-    secrets: inherit
-
-  staging_plan:
-    name: PR Plan - Staging
-    uses: ./.github/workflows/plan.yml
-    if: github.base_ref == 'main'
-    with:
-      environment: main
+      environment: ${{ github.event.inputs.environment }}
       folder: ${{ github.event.inputs.folder }}
     secrets: inherit
