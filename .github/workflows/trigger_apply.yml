@@ -13,15 +13,19 @@ on:
         options:
           - develop
           - main
+      # folder:
+      #   type: choice
+      #   description: "Select the folder:"
+      #   required: true
+      #   options:
+      #     - ig
+      #     - gke
+      #     - serverless
+      #     - gcp_funtions
       folder:
-        type: choice
-        description: "Select the folder:"
+        type: string
+        description: "ig, gke, serverless, gcp_funtions"
         required: true
-        options:
-          - ig
-          - gke
-          - serverless
-          - gcp_funtions
       auto_approve:
         type: boolean
         description: "Check this to automatically approve changes."
@@ -52,8 +56,6 @@ on:
         type: string
         description: "Destroy: Sample: aws_s3_bucket.demo_bucket"
         required: false
-
-name: TERRAFORM APPLY
 
 jobs:
   develop_apply:
