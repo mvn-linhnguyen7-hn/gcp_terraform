@@ -1,9 +1,13 @@
+name: apply
 on:
   workflow_call:
     inputs:
       environment:
         type: string
         required: true
+      folder:
+        required: true
+        type: string
       auto_approve:
         type: string
         required: false
@@ -28,12 +32,11 @@ on:
         type: string
         required: false
 
-name: _Terraform Apply
 env:
-  REGION: us-central1
+  REGION: asia-northeast1
   GCP_ENV: ${{ secrets.GCP_ENV }}
-  GCP_CREDENTIALS: ${{ secrets.GCP_TERRAFORM_KEY }}
-  GCP_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+  GCP_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
 
 jobs:
   apply:
@@ -42,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - id: "auth"
         uses: "google-github-actions/auth@v0"
@@ -50,7 +53,7 @@ jobs:
           credentials_json: "${{ env.GCP_CREDENTIALS }}"
 
       - name: Setup Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0.6.0
+        uses: google-github-actions/setup-gcloud@v0
         with:
           project_id: ${{ env.GCP_PROJECT }}
 
@@ -76,11 +79,11 @@ jobs:
           echo "--------------------------------------------------------------"
           gcloud services list
 
-      - name: Create Terraform State Bucket and enable Object versioning
-        run: |-
-          gsutil mb -p ${{ env.GCP_PROJECT }} -b off -l ${{ env.REGION }} gs://${{ env.GCP_PROJECT }}-tfstate-files/ || true
-          gsutil versioning set on gs://${{ env.GCP_PROJECT }}-tfstate-files/
-
+      - name: Remove default.tflock if exist
+        env:
+          TF_FOLDER: ${{ inputs.folder }}
+        run: gsutil rm gs://${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files/default.tflock || true
+          
       - name: Render TFVARS
         uses: nowactions/envsubst@v1
         with:
@@ -90,11 +93,13 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 0.15.5
+          terraform_version: 1.2.8
 
       - name: Terraform Init
         id: init
-        run: terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
+        run: |
+        cd ${{ env.TF_FOLDER }}
+        terraform init -reconfigure -backend=true -backend-config="bucket=${{ env.GCP_PROJECT }}-${{ env.TF_FOLDER }}-tfstate-files" -backend-config="credentials=$GOOGLE_APPLICATION_CREDENTIALS"
 
       - name: Terraform Import
         if: inputs.import != null
@@ -114,6 +119,7 @@ jobs:
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_RESOURCE: ${{ inputs.destroy }}
         run: |
+          cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
             terraform apply -destroy --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }} -auto-approve
           else
@@ -126,6 +132,7 @@ jobs:
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_RESOURCE: ${{ inputs.apply_target }}
         run: |
+          cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
             terraform apply --var-file=./terraform.tfvars --target ${{ env.TF_RESOURCE }} -auto-approve
           else
@@ -138,17 +145,19 @@ jobs:
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
           TF_COMMAND: ${{ inputs.custom_command }}
         run: |
+          cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
             terraform ${{ env.TF_COMMAND }} --var-file=./terraform.tfvars -auto-approve
           else
             terraform ${{ env.TF_COMMAND }} --var-file=./terraform.tfvars
           fi
-
+          
       - name: Terraform Apply All
         if: ${{ inputs.apply == 'true' }}
         env:
           TF_AUTO_APPROVE: ${{ inputs.auto_approve }}
         run: |
+          cd ${{ env.TF_FOLDER }}
           if [[ ${{ env.TF_AUTO_APPROVE }} == 'true' ]]; then
             terraform apply --var-file=./terraform.tfvars -auto-approve
           else
