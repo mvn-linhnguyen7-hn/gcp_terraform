@@ -4,8 +4,8 @@ resource "google_compute_region_instance_group_manager" "appserver" {
 
   base_instance_name = "app"
   # zone     = "europe-west1-c"
-  region                     = "europe-west1"
-  distribution_policy_zones  = ["europe-west1-a", "europe-west1-c"]
+  region                     = "asia-northeast1"
+  distribution_policy_zones  = ["asia-northeast1-a", "asia-northeast1-c"]
 
   named_port {
     name = "http"
