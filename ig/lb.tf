@@ -47,7 +47,7 @@ resource "google_compute_backend_service" "default" {
   timeout_sec           = 10
   health_checks         = [google_compute_health_check.autohealing.id]
   backend {
-    group           = google_compute_instance_group_manager.appserver.instance_group
+    group           = google_compute_region_instance_group_manager.appserver.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
   }
