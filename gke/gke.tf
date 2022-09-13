@@ -29,7 +29,7 @@ module "gcp-network" {
       {
         range_name    = var.ip_range_services_name
         ip_cidr_range = "10.30.0.0/16"
-      },
+      }
     ]
   }
 }
@@ -53,6 +53,6 @@ module "gke" {
       min_count      = 1
       max_count      = 2
       disk_size_gb   = 30
-    },
+    }
   ]
 }
