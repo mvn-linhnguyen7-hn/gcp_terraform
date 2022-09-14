@@ -1,6 +1,6 @@
 
 resource "google_compute_region_instance_group_manager" "appserver" {
-  name = "appserver-igm"
+  name = "ig-appserver-igm"
 
   base_instance_name = "app"
   # zone     = "europe-west1-c"
