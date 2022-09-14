@@ -11,9 +11,9 @@ resource "google_compute_instance_template" "instance_template" {
   network_interface {
     network    = google_compute_network.default.id
     subnetwork = google_compute_subnetwork.default.id
-    access_config {
-      // Ephemeral public IP
-    }
+    # access_config {
+    #   // Ephemeral public IP
+    # }
   }
 
   lifecycle {
