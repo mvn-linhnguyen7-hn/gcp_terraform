@@ -1,7 +1,7 @@
 data "archive_file" "test_function" {
   type        = "zip"
-  source_dir  = "${path.module}/functions/test_functions"
-  output_path = "${path.module}/functions/test_functions.zip"
+  source_dir  = "./functions/test_functions"
+  output_path = "./functions/test_functions.zip"
 }
 
 resource "google_storage_bucket" "cloud_functions_source" {
@@ -13,5 +13,5 @@ resource "google_storage_bucket" "cloud_functions_source" {
 resource "google_storage_bucket_object" "test_function_source" {
   name   = "${data.archive_file.test_function.output_md5}.zip"
   bucket = google_storage_bucket.cloud_functions_source.name
-  source = "${path.module}/functions/test_functions.zip"
+  source = "./functions/test_functions.zip"
 }
