@@ -33,6 +33,7 @@ resource "google_compute_firewall" "ssh" {
   network       = google_compute_network.default.id
   source_ranges = ["0.0.0.0/0"]
   allow {
+    ports    = ["22"]
     protocol = "tcp"
   }
 }
