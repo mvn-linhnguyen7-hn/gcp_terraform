@@ -31,7 +31,7 @@ resource "google_compute_firewall" "ssh" {
   name          = "ig-ssh"
   direction     = "INGRESS"
   network       = google_compute_network.default.id
-  source_ranges = ["0.0.0.0/0"]
+  source_ranges = ["118.70.133.189/32", "113.160.19.218/32", "27.72.56.167/32"]
   allow {
     ports    = ["22"]
     protocol = "tcp"
