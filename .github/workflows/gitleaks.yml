@@ -9,5 +9,3 @@ jobs:
       - uses: actions/checkout@v1
       - name: gitleaks-action
         uses: gitleaks/gitleaks-action@v1.6.0
-        with:
-          config-path: .gitleaks.toml
