@@ -1,11 +1,11 @@
 # reserved IP address
 resource "google_compute_global_address" "default" {
-  name = "lb-static-ip"
+  name = "serverless-lb-static-ip"
 }
 
 # forwarding rule
 resource "google_compute_global_forwarding_rule" "default" {
-  name                  = "lb-forwarding-rule"
+  name                  = "serverless-lb-forwarding-rule"
   ip_protocol           = "TCP"
   load_balancing_scheme = "EXTERNAL"
   port_range            = "80"
@@ -15,19 +15,19 @@ resource "google_compute_global_forwarding_rule" "default" {
 
 # HTTP target proxy
 resource "google_compute_target_http_proxy" "default" {
-  name     = "lb-target-http-proxy"
+  name     = "serverless-lb-target-http-proxy"
   url_map  = google_compute_url_map.default.id
 }
 
 # URL map
 resource "google_compute_url_map" "default" {
-  name            = "lbl-url-map"
+  name            = "serverless-lbl-url-map"
   default_service = google_compute_backend_service.default.id
 }
 
 # backend service
 resource "google_compute_backend_service" "default" {
-  name                  = "lb-backend-subnet"
+  name                  = "serverless-lb-backend-subnet"
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL"
   connection_draining_timeout_sec = 60

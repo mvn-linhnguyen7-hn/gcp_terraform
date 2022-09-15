@@ -1,11 +1,11 @@
 # reserved IP address
 resource "google_compute_global_address" "default" {
-  name = "lb-static-ip"
+  name = "ig-lb-ip"
 }
 
 # forwarding rule
 resource "google_compute_global_forwarding_rule" "default" {
-  name                  = "lb-forwarding-rule"
+  name                  = "ig-lb-forwarding-rule"
   ip_protocol           = "TCP"
   load_balancing_scheme = "EXTERNAL"
   port_range            = "80"
@@ -15,19 +15,19 @@ resource "google_compute_global_forwarding_rule" "default" {
 
 # HTTP target proxy
 resource "google_compute_target_http_proxy" "default" {
-  name     = "lb-target-http-proxy"
+  name     = "ig-lb-target-http-proxy"
   url_map  = google_compute_url_map.default.id
 }
 
 # URL map
 resource "google_compute_url_map" "default" {
-  name            = "lbl-url-map"
+  name            = "ig-lb-url-map"
   default_service = google_compute_backend_service.default.id
 }
 
 #health_check
 resource "google_compute_health_check" "autohealing" {
-  name                = "autohealing-health-check"
+  name                = "ig-autohealing-health-check"
   check_interval_sec  = 5
   timeout_sec         = 5
   healthy_threshold   = 2
@@ -41,7 +41,7 @@ resource "google_compute_health_check" "autohealing" {
 
 # backend service
 resource "google_compute_backend_service" "default" {
-  name                  = "lb-backend-subnet"
+  name                  = "ig-lb-backend-subnet"
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL"
   timeout_sec           = 10
