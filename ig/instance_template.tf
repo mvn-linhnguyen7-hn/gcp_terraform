@@ -25,4 +25,7 @@ resource "google_compute_instance_template" "instance_template" {
   sudo apt-get update
   sudo apt-get install nginx -y
   EOF
+
+  tags = ["allow-health-check"]
+
 }
